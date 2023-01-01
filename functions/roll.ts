@@ -22,16 +22,20 @@ export const RollFunctionDefinition = DefineFunction({
 export default SlackFunction(
   RollFunctionDefinition,
   async ({ inputs, env, client }) => {
-    if (!inputs.text.includes("roll")) {
+    if (!inputs.text.includes("roll") && !inputs.text.includes("omikuji")) {
       return { outputs: {} };
     }
 
     const r = Math.random();
     const dice_number = Math.ceil(6 * r);
 
+    const text = inputs.text.includes("roll")
+      ? dice_number.toString()
+      : ["大吉", "吉", "中吉", "小吉", "末吉", "凶"][dice_number - 1];
+
     await client.chat.postMessage({
       channel: env["channel-id"],
-      text: dice_number.toString(),
+      text: text,
     });
 
     return { outputs: {} };
